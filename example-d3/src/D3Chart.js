@@ -69,34 +69,45 @@ export default class D3Chart {
          .padding(0.4)
 
      const xAxisCall = d3.axisBottom(x)
-     vis.xAxisGroup.call(xAxisCall)
+     vis.xAxisGroup
+         .transition().duration(500)
+         .call(xAxisCall)
 
      const yAxisCall = d3.axisLeft(y)
-     vis.yAxisGroup.call(yAxisCall)
+     vis.yAxisGroup
+         .transition().duration(500)
+         .call(yAxisCall)
 
      // DATA JOIN
         const rects = vis.svg.selectAll('rect')
             .data(vis.data)
 
      // EXIT
-        rects.exit().remove()
+        rects.exit()
+            .transition().duration(500)
+                .attr('height', 0)
+                .attr('y', HEIGHT)
+                .remove()
 
      // UPDATE, data changes and rects on screen, need to change the attributes
         rects
+            .transition().duration(500)
             .attr('x', d => x(d.name)) //starting location, each bar spaced per name
             .attr('y', d => y(d.height)) //starting location top 0, pushes bars to the base of svg
             .attr('width', x.bandwidth()) //method for generating bar width, factors in padding
             .attr('height', d => HEIGHT - y(d.height)) //use y linear scale to generate height
-            .attr('fill', 'grey')
+
 
      //ENTER, does exist on data but not on screen
         rects.enter()
             .append('rect')
             .attr('x', d => x(d.name)) //starting location, each bar spaced per name
-            .attr('y', d => y(d.height)) //starting location top 0, pushes bars to the base of svg
             .attr('width', x.bandwidth()) //method for generating bar width, factors in padding
-            .attr('height', d => HEIGHT - y(d.height)) //use y linear scale to generate height
             .attr('fill', 'grey')
+            .attr('y', HEIGHT)
+            .transition().duration(500)
+                .attr('y', d => y(d.height)) //starting location top 0, pushes bars to the base of svg
+                .attr('height', d => HEIGHT - y(d.height)) //use y linear scale to generate height
 
  }
 }
